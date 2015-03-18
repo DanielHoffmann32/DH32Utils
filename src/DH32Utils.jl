@@ -1,6 +1,7 @@
 module DH32Utils
 
-export drawSVG, 
+export drawSVG,
+       drawSVGandPNG,
        screenareaPNG
 
 using Images
@@ -19,6 +20,23 @@ function drawSVG(figstem::ASCIIString; edit::Bool=false)
     display("image/svg+xml",graph)
     
 end
+
+function drawSVGandPNG(figstem::ASCIIString; edit::Bool=false)
+    
+    if (stat("$figstem.svg").size == 0) #generate new figure
+        run(`cp /home/hoffmann/Documents/template-drawing.svg $figstem.svg` 
+        |> `inkscape $figstem.svg --with-gui -D -l $figstem.svg`)
+    elseif (edit == true) #edit existing figure
+        run(`inkscape $figstem.svg --with-gui -D -l $figstem.svg -e $figstem.png`)
+    end
+
+    run(`inkscape $figstem.svg -e $figstem.png`)
+
+    #show figure
+    imread("$figstem.png")
+    
+end
+
 
 function screenareaPNG(figstem::ASCIIString; edit::Bool=false)
 
