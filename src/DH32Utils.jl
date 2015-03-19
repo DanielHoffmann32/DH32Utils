@@ -9,8 +9,8 @@ using Images
 function drawSVG(figstem::ASCIIString; edit::Bool=false)
     
     if (stat("$figstem.svg").size == 0) #generate new figure
-        run(`cp /home/hoffmann/Documents/template-drawing.svg $figstem.svg` 
-        |> `inkscape $figstem.svg --with-gui -D -l $figstem.svg`)
+        cp(joinpath(Pkg.dir("DH32Utils","data"),"template-drawing.svg"),"$figstem.svg")
+        run(`inkscape $figstem.svg --with-gui -D -l $figstem.svg`)
     elseif (edit == true) #edit existing figure
         run(`inkscape $figstem.svg --with-gui -D -l $figstem.svg`)
     end
@@ -24,8 +24,8 @@ end
 function drawSVGandPNG(figstem::ASCIIString; edit::Bool=false)
     
     if (stat("$figstem.svg").size == 0) #generate new figure
-        run(`cp /home/hoffmann/Documents/template-drawing.svg $figstem.svg` 
-        |> `inkscape $figstem.svg --with-gui -D -l $figstem.svg`)
+        cp(joinpath(Pkg.dir("DH32Utils","data"),"template-drawing.svg"),"$figstem.svg")
+        run(`inkscape $figstem.svg --with-gui -D -l $figstem.svg`)
     elseif (edit == true) #edit existing figure
         run(`inkscape $figstem.svg --with-gui -D -l $figstem.svg -e $figstem.png`)
     end
