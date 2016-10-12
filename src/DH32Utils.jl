@@ -6,7 +6,7 @@ export drawSVG,
 
 using Images
 
-function drawSVG(figstem::ASCIIString; edit::Bool=false)
+function drawSVG(figstem::String; edit::Bool=false)
     
     if (stat("$figstem.svg").size == 0) #generate new figure
         cp(joinpath(Pkg.dir("DH32Utils","data"),"template-drawing.svg"),"$figstem.svg")
@@ -21,7 +21,7 @@ function drawSVG(figstem::ASCIIString; edit::Bool=false)
     
 end
 
-function drawSVGandPNG(figstem::ASCIIString; edit::Bool=false)
+function drawSVGandPNG(figstem::String; edit::Bool=false)
     
     if (stat("$figstem.svg").size == 0) #generate new figure
         cp(joinpath(Pkg.dir("DH32Utils","data"),"template-drawing.svg"),"$figstem.svg")
@@ -38,7 +38,7 @@ function drawSVGandPNG(figstem::ASCIIString; edit::Bool=false)
 end
 
 
-function screenareaPNG(figstem::ASCIIString; edit::Bool=false)
+function screenareaPNG(figstem::String; edit::Bool=false)
 
     if (stat("$figstem.png").size == 0 || edit == true)
         run(`scrot "$figstem.png" -s`) #generate new screenshot
