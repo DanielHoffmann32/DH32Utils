@@ -4,7 +4,7 @@ export drawSVG,
        drawSVGandPNG,
        screenareaPNG
 
-using Images
+using ImageMagick, FileIO
 
 function drawSVG(figstem::String; edit::Bool=false)
     
@@ -33,7 +33,7 @@ function drawSVGandPNG(figstem::String; edit::Bool=false)
     run(`inkscape $figstem.svg -e $figstem.png`)
 
     #show figure
-    imread("$figstem.png")
+    load("$figstem.png")
     
 end
 
@@ -45,7 +45,7 @@ function screenareaPNG(figstem::String; edit::Bool=false)
     end
 
     #show image
-    Images.imread("$figstem.png")
+    load("$figstem.png")
     
 end
     
