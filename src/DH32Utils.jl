@@ -3,7 +3,8 @@ module DH32Utils
 export drawSVG,
     drawSVGandPNG,
     screenareaPNG,
-    loess_fit
+    loess_fit,
+    block_average_spread
 
 using ImageMagick, FileIO, Loess
 
@@ -96,6 +97,57 @@ function loess_fit{T <: AbstractFloat}(
     ymodel = Loess.predict(model, xsteps)
 
     xsteps, ymodel
+end
+
+function block_average_spread(
+            x::Array{Float64,1}; #quantity to be averaged
+            dimin::Int64=10, #minimum width of blocks
+            dimax::Int64=0, #maximum width of blocks
+            ddi::Int64=10, #block increment 
+            weighted::Bool=false, #shall we weight
+            w::Array{Float64,1}=[1.], #weights
+            qmin::Float64=0.05, #minimum quantile to be reported
+            qmax::Float64=0.95 #maximum quantile to be reported
+        )
+    nx = length(x)
+    if weighted == true
+        if length(w) != nx
+            error("error block_averages: length(w)!=length(x)")
+        end
+        if sum(w .> 0.) != nx
+            error("error block_averages: some weights not positive")
+        end
+    else
+        w = ones(nx)
+    end
+    if dimax == 0 #the last block average is between first and second half of data
+        dimax = div(nx,2)
+    end
+    if dimax < dimin
+        error("error block_averages: dimax < dimin")
+    end
+    
+    ba = zeros(div(nx,dimin)) #array for analysis of block averages
+    
+    nout = length(collect(dimin:ddi:dimax))
+    qmins = zeros(nout) #output of lower quantiles of block averages 
+    qmaxs = zeros(nout) #output of upper quantiles of bl. av.
+    
+    jout=1
+    for di in dimin:ddi:dimax #width of blocks
+        ni = div(nx,di) # number of blocks
+        bstart = 1
+        bend = di
+        for i in 1:ni 
+            ba[i]=dot(x[bstart:bend],w[bstart:bend])/sum(w[bstart:bend])
+            bstart += di
+            bend += di
+        end
+        qmins[jout] = quantile(ba[1:ni],qmin)
+        qmaxs[jout] = quantile(ba[1:ni],qmax)
+        jout += 1
+    end
+    qmins, qmaxs
 end
 
 end # module
