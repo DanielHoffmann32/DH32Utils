@@ -116,9 +116,7 @@ Input:
 
     - ddi (default 10): increment in block size
 
-    - weighted (default false): should we weight each vector element
-
-    - w: vector of weights, if not given will be set to [1., 1., ...., 1.]
+    - w (default [1.] = no weights used): vector of weights, if not given will be set to [1., 1., ...., 1.]
 
     - qmin (default 0.05): lower quantile
 
@@ -130,13 +128,12 @@ function block_average_spread(
             dimin::Int64=10, #minimum width of blocks
             dimax::Int64=0, #maximum width of blocks
             ddi::Int64=10, #block increment 
-            weighted::Bool=false, #shall we weight
             w::Array{Float64,1}=[1.], #weights
             qmin::Float64=0.05, #minimum quantile to be reported
             qmax::Float64=0.95 #maximum quantile to be reported
         )
     nx = length(x)
-    if weighted == true
+    if w != [1.] #weighted
         if length(w) != nx
             error("error block_averages: length(w)!=length(x)")
         end
