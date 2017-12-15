@@ -99,6 +99,32 @@ function loess_fit{T <: AbstractFloat}(
     xsteps, ymodel
 end
 
+"""
+Computes block averages of a float vector and determines quantiles (default 0.05 and 0.95 quantilees) of the distribution of these averages for each block size.
+
+The vector elements can be weighted with an additional vector of the same length. In this case the weights in each block are normalized to sum up to one.
+
+Input:
+
+- x: Float64 array
+
+- optionally the following named parameters can be given:
+
+    - dimin (default 10): the minimum block interval (= min. block size)
+
+    - dimax (default 0, will be automatically calculated): the maximum block interval (= max. block size)
+
+    - ddi (default 10): increment in block size
+
+    - weighted (default false): should we weight each vector element
+
+    - w: vector of weights, if not given will be set to [1., 1., ...., 1.]
+
+    - qmin (default 0.05): lower quantile
+
+    - qmax (defaults 0.95): upper quantile
+
+"""
 function block_average_spread(
             x::Array{Float64,1}; #quantity to be averaged
             dimin::Int64=10, #minimum width of blocks
