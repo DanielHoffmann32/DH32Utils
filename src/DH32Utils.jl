@@ -1,10 +1,11 @@
 module DH32Utils
 
-export drawSVG,
+export     block_average_spread,
+    drawSVG,
     drawSVGandPNG,
-    screenareaPNG,
     loess_fit,
-    block_average_spread
+    midpoints,
+    screenareaPNG
 
 using ImageMagick, FileIO, Loess
 
@@ -171,6 +172,19 @@ function block_average_spread(
         jout += 1
     end
     qmins, qmaxs
+end
+
+"""
+
+Compute midpoints of given range or vector.
+
+"""
+function midpoints(r::Range)
+    r[1:length(r)-1] + 0.5*step(r)
+end
+
+function midpoints(v::AbstractVector)
+    [0.5*(v[i] + v[i+1]) for i in 1:length(v)-1]
 end
 
 end # module
