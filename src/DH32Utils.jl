@@ -7,7 +7,7 @@ export     block_average_spread,
     midpoints,
     screenareaPNG
 
-using ImageMagick, FileIO, Loess, DataFrames
+using ImageMagick, FileIO, Loess, DataFrames, Clustering
 
 """
 Plot recipe for cluster dendrogram, from
