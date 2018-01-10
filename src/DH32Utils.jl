@@ -3,6 +3,7 @@ module DH32Utils
 export     block_average_spread,
     drawSVG,
     drawSVGandPNG,
+    hclustplot,
     loess_fit,
     midpoints,
     screenareaPNG
