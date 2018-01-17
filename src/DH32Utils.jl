@@ -9,7 +9,7 @@ export     block_average_spread,
     midpoints,
     screenareaPNG
 
-using ImageMagick, FileIO, Loess, DataFrames, Clustering
+using ImageMagick, FileIO, Loess, DataFrames, Clustering, Gadfly
 
 """
 Takes a Mamba model (see Mamba.jl) and a string (stem name of files), and
@@ -30,11 +30,10 @@ Symbols in the graph:
 - arrows = "generates"
 
 """
-using Gadfly
 
 function draw_mamba_model_graph(model::Any, filestem::String)
     filename=filestem*".dot"
-    Gadfly.draw(model,filename=filename)
+    draw(model,filename=filename)
     
     #we replace the "." in the model name because it causes
     #an error:
