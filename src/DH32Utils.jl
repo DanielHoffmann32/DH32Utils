@@ -1,6 +1,7 @@
 module DH32Utils
 
 export     block_average_spread,
+    draw_mamba_model_graph,
     drawSVG,
     drawSVGandPNG,
     hclustplot,
@@ -9,6 +10,39 @@ export     block_average_spread,
     screenareaPNG
 
 using ImageMagick, FileIO, Loess, DataFrames, Clustering
+
+"""
+Takes a Mamba model (see Mamba.jl) and a string (stem name of files), and
+draws an acyclic graph corresponding to the model.
+
+NOTE: needs the GraphViz dot program!
+
+Symbols in the graph:
+
+- ellipses are stochastic variables
+
+- squares are logic variables
+
+- white symbols = monitored variables
+
+- gray symbols = variables not monitored
+
+- arrows = "generates"
+
+"""
+function draw_mamba_model_graph(model::Any, filestem::String)
+    filename=filestem*".dot"
+    draw(model,filename=filename)
+    
+    #we replace the "." in the model name because it causes
+    #an error:
+    m = replace(readstring(filename),"Mamba.Model","MambaModel")
+    write(filename,m)
+
+    #we use the original dot program because it plots with a better
+    #layout:
+    display("image/svg+xml",open(readstring,`dot $filename -Tsvg`))
+end
 
 """
 Plot recipe for cluster dendrogram, from
