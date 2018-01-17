@@ -30,9 +30,11 @@ Symbols in the graph:
 - arrows = "generates"
 
 """
+using Gadfly
+
 function draw_mamba_model_graph(model::Any, filestem::String)
     filename=filestem*".dot"
-    draw(model,filename=filename)
+    Gadfly.draw(model,filename=filename)
     
     #we replace the "." in the model name because it causes
     #an error:
