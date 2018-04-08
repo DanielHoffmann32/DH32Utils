@@ -7,9 +7,10 @@ export     block_average_spread,
     hclustplot,
     loess_fit,
     midpoints,
+    save_script_and_fig_to_unique_filenames,
     screenareaPNG
 
-using ImageMagick, FileIO, Loess, DataFrames, Clustering, Gadfly
+using ImageMagick, FileIO, Loess, DataFrames, Clustering, StatPlots
 
 """
 Takes a Mamba model (see Mamba.jl) and a string (stem name of files), and
@@ -188,7 +189,7 @@ function loess_fit{T <: AbstractFloat}(
 end
 
 """
-Computes block averages of a float vector and determines quantiles (default 0.05 and 0.95 quantilees) of the distribution of these averages for each block size.
+Computes block averages of a float vector and determines quantiles (default 0.05 and 0.95 quantiles) of the distribution of these averages for each block size.
 
 The vector elements can be weighted with an additional vector of the same length. In this case the weights in each block are normalized to sum up to one.
 
@@ -210,6 +211,11 @@ Input:
 
     - qmax (defaults 0.95): upper quantile
 
+Output:
+
+    - qmins: array of lower quantile of block averages
+
+    - qmaxs: array of upper quantile of block averages
 """
 function block_average_spread(
             x::Array{Float64,1}; #quantity to be averaged
@@ -272,6 +278,71 @@ end
 
 function midpoints(v::AbstractVector)
     [0.5*(v[i] + v[i+1]) for i in 1:length(v)-1]
+end
+
+"""
+Example:
+
+    For given file "bla.jl" script the call
+
+    save_script_and_fig_to_unique_filenames("bla")
+
+will generate a copy of that file in "bla_RsTzzu.jl" and save the last figure to "bla_RsTzzu.pdf".
+
+Input:
+
+    - source_stem: stem name of source file, string; this should be the name of the existing script file (without extension_script) that will be written in first output
+
+    - extension_script (optional, default ".jl"): ending of script file
+
+    - extension_fig (optional, default ".pdf"): ending and type of figure
+
+    - separator (optional, defaul "_"): string that separates source stem and unique component of file names
+
+Output:
+
+    - writes script file with name source*unique*extension_script in current directory
+
+    - saves last figure to file named source*unique*extension_fig in current directory
+
+"unique" in both outputs is the same unique filename string.
+
+"""
+
+function save_script_and_fig_to_unique_filenames(source_stem::String="";
+                                                 extension_script::String=".jl",
+                                                 extension_fig::String=".pdf",
+                                                 separator::String="_")
+
+    if extension_script == extension_fig
+        error("extension_script and extension_fig must be different")
+    end
+
+    if source_stem==""
+        error("source file stem name required as input")
+    end
+
+    if !isfile(source_stem*extension_script)
+        error("source file "*source_stem*extension_script*" not present")
+    end
+    
+    written=false
+    trials=0
+    while (!written && trials<1000)
+        #propose unique file names
+        proposed_unique=randstring(10)
+        outfile_script = source_stem*separator*proposed_unique*extension_script
+        outfile_fig = source_stem*separator*proposed_unique*extension_fig
+
+        if !isfile(outfile_script) && !isfile(outfile_fig)
+            #no files with the proposed names present
+            cp(source_stem*extension_script, outfile_script)
+            savefig(outfile_fig)
+            written=true
+            break
+        end
+        trials += 1
+    end
 end
 
 end # module
